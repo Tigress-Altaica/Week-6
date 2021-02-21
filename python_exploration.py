@@ -14,16 +14,6 @@ Assignment 2: Part 2"""
 from enum import Enum
 
 
-class AccountStanding(Enum):
-    """
-    Enum representing the standing of a customer payment account
-    """
-    GOOD = "GOOD"
-    FAIR = "FAIR"
-    POOR = "POOR"
-    CLOSED = "CLOSED"
-
-
 # Array of customers
 CUSTOMERS = ["Amy Garrison","Braydon Beil","Bluebell Nguyen",
 		   "Konrad Sears","Cheryl Salas","Rosanna Meyer",
@@ -98,91 +88,108 @@ PAYMENTS = [[1032,47,43,38,61,69,99,47,36,30,99,59,17],
 		   [1015,16,86,61,44,63,80,48,25,15,30,45,36]]
 
 
+class AccountStanding(Enum):
+	"""
+	Enum representing the standing of a customer payment account
+	"""
+	GOOD = "GOOD"
+	FAIR = "FAIR"
+	POOR = "POOR"
+	CLOSED = "CLOSED"
+
+
 def print_out_payment_history_header():
-    """
-    Print out the header for a customer payment history report.
-    """
-    print("-------------------------------------------------------------")
-    print("Customer Payment History")
-    print("-------------------------------------------------------------")
-    print("Name                  Account    01      02      03      04      05      06      07      08      09      10      11      12      Standing")
-    print("-------------------------------------------------------------")
+	"""
+	Print out the header for a customer payment history report.
+	"""
+	print("----------------------------------------------------------------------------------------------------------------------------------------------------")
+	print("Customer Payment History")
+	print("----------------------------------------------------------------------------------------------------------------------------------------------------")
+	print("Name                Account  01       02       03       04       05       06       07       08       09       10       11       12       Standing")
+	print("----------------------------------------------------------------------------------------------------------------------------------------------------")
 
 
 # TODO: Revise formatting of print statements so that the different customers'
 #   printouts line up
 def print_out_customer_payment_history(cust_index):
-    """
-    Print out the payment history for the customer at the specified index in the
-    CUSTOMERS array.
+	"""
+	Print out the payment history for the customer at the specified index in the
+	CUSTOMERS array.
 
-    :param cust_index: The index of the customer
-    """
-    # Customer name
-    print(":s  ", CUSTOMERS[cust_index], end="")
+	:param cust_index: The index of the customer
+	"""
+	# Customer name
+	cust_name = CUSTOMERS[cust_index]
+	cust_name_extra_spaces = ""
+	if len(cust_name) < 18:
+		cust_name_extra_spaces = " " * (18 - len(cust_name))
+	print("{:s}{:s}  ".format(cust_name, cust_name_extra_spaces), end="")
 
-    # Account number
-    print(":d     ", PAYMENTS[cust_index][0], end="")
+	# Account number
+	print("{:d}     ".format(PAYMENTS[cust_index][0]), end="")
 
-    # Payments
-    for i in range(1, len(PAYMENTS[0])):
-        pay_amt = PAYMENTS[cust_index][pay_index]
-        print(":f ", pay_amt, end="")
+	# Payments
+	for pay_index in range(1, len(PAYMENTS[0])):
+		pay_amt = PAYMENTS[cust_index][pay_index]
+		pay_amt_extra_spaces = ""
+		if len(str(pay_amt)) < 6:
+			pay_amt_extra_spaces = " " * (6 - len(str(pay_amt)))
+		print("{:.2f}{:s}".format(float(pay_amt), pay_amt_extra_spaces), end="")
 
-    # Account standing
-    account_standing = account_standing(cust_index)
-    print("  " + account_standing)
-
-
-def account_standing(acct_index):
-    """
-    Return the account standing for the account at the specified index in the
-    PAYMENTS array.
-
-    :param acct_index: The index of the account in the PAYMENTS array
-
-    :return: The standing of the account
-    """
-    num_of_zero_payments = num_of_zero_payments(acct_index)
-
-    if num_of_zero_payments == 0:
-        account_standing = AccountStanding.GOOD
-    elif num_of_zero_payments == 1:
-        account_standing = AccountStanding.FAIR
-    elif num_of_zero_payments == 2:
-        account_standing = AccountStanding.POOR
-    else:
-        account_standing = AccountStanding.CLOSED
-
-    return account_standing
+	# Account standing
+	account_standing = calculate_account_standing(cust_index)
+	print("{:s}".format(account_standing.value))
 
 
-def num_of_zero_payments(acct_index):
-    """
-    Return the number of zero (0) payments that exist for the account at the
-    specified index in the PAYMENTS array.
+def calculate_account_standing(acct_index):
+	"""
+	Return the account standing for the account at the specified index in the
+	PAYMENTS array.
 
-    :param acct_index: The index of the account in the PAYMENTS array
+	:param acct_index: The index of the account in the PAYMENTS array
 
-    :return: The number of zero (0) PAYMENTS that exist for the account
-    """
-    num_of_zero_payments = 0
+	:return: The standing of the account
+	"""
+	num_of_zero_payments = calculate_num_of_zero_payments(acct_index)
 
-    for i in range(1, len(PAYMENTS(acct_index))):
-        if PAYMENTS[acct_index][i] == 0:
-            num_of_zero_payments += 1
+	if num_of_zero_payments == 0:
+		account_standing = AccountStanding.GOOD
+	elif num_of_zero_payments == 1:
+		account_standing = AccountStanding.FAIR
+	elif num_of_zero_payments == 2:
+		account_standing = AccountStanding.POOR
+	else:
+		account_standing = AccountStanding.CLOSED
 
-    return num_of_zero_payments
+	return account_standing
+
+
+def calculate_num_of_zero_payments(acct_index):
+	"""
+	Return the number of zero (0) payments that exist for the account at the
+	specified index in the PAYMENTS array.
+
+	:param acct_index: The index of the account in the PAYMENTS array
+
+	:return: The number of zero (0) PAYMENTS that exist for the account
+	"""
+	num_of_zero_payments = 0
+
+	for i in range(1, len(PAYMENTS[acct_index])):
+		if PAYMENTS[acct_index][i] == 0:
+			num_of_zero_payments += 1
+
+	return num_of_zero_payments
 
 
 def main():
-    # Print out report header
-    print_out_payment_history_header()
+	# Print out report header
+	print_out_payment_history_header()
 
-    # Print the payment history for each customer in the CUSTOMERS array.
-    for cust_index in range(0, len(CUSTOMERS)):
-        print_out_customer_payment_history(cust_index)
+	# Print the payment history for each customer in the CUSTOMERS array.
+	for cust_index in range(0, len(CUSTOMERS)):
+		print_out_customer_payment_history(cust_index)
 
 
 if __name__ == "__main__":
-    main()
+	main()
